@@ -224,7 +224,7 @@ List of supported modifications for *three_prime* and *five_prime*. Pass the str
 
 All tools are free to use for academic and commercial purposes under Creative Commons. Please cite:
 
-*“Molar Extinction Coefficients were calculated using the OLIGOWIZARD nucleic acid toolbox – available at https://www.oligowizard.com/.”*
+*“Oligo properties were calculated using the OLIGOWIZARD nucleic acid toolbox – available at https://www.oligowizard.com/.”*
 
 
 
