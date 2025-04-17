@@ -13,11 +13,11 @@ All variable names in *italics* represent the keys used in the API request or re
 
 ## Contents
 
-- [/advanced - Calculator Endpoint](##Oligo-Properties-Calculator-(/advanced))
-- [/convert - Sequence Conversion Tool](##Sequence-Conversion-tool-(/convert))
-- [/structure - Chemical Structure Generation](##Chemical-Structure-Generation-(/structure))
-- [Available Terminal Modifications](##Available-Terminal-Modifications)
-- [Citation](##Citation)
+- [/advanced - Calculator Endpoint](#Oligo-Properties-Calculator-(/advanced))
+- [/convert - Sequence Conversion Tool](#Sequence-Conversion-tool-(/convert))
+- [/structure - Chemical Structure Generation](#Chemical-Structure-Generation-(/structure))
+- [Available Terminal Modifications](#Available-Terminal-Modifications)
+- [Citation](#Citation)
 
 
 ---
