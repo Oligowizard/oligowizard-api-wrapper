@@ -13,65 +13,212 @@ All variable names in *italics* represent the keys used in the API request or re
 
 ## Contents
 
-- [Calculator Endpoint](#calculator-endpoint)
-- [Structure Drawing](#structure-drawing)
-- [Available Terminal Modifications](#available-terminal-modifications)
-
+- [/advanced - Calculator Endpoint](##Oligo-Properties-Calculator-(/advanced))
+- [/convert - Sequence Conversion Tool](##Sequence-Conversion-tool-(/convert))
+- [/structure - Chemical Structure Generation](##Chemical-Structure-Generation-(/structure))
+- [Available Terminal Modifications](##Available-Terminal-Modifications)
+- [Citation](##Citation)
 
 
 ---
 
-## Calculator Endpoint
+## Oligo Properties Calculator (/advanced)
 
 Performs biophysical and chemical calculations for a single oligonucleotide.
 
 ### Input Parameters
 
-- *sequence* `[STRING]` — Required. Must be 5'→3'. Accepts single-letter codes for 2'-modifications and PO/PS backbone (uppercase = PO, lowercase = PS).
-- *A260* `[FLOAT]` — Optional (default: `1.0`). Absorbance at 260 nm.
-- *Na_conc* `[FLOAT]` — Optional (default: `50`). Sodium concentration in mM.
-- *K_conc* `[FLOAT]` — Optional (default: `0`). Potassium concentration in mM.
-- *Mg_conc* `[FLOAT]` — Optional (default: `0`). Magnesium concentration in mM.
-- *three_prime* `[STRING|FLOAT]` — Optional (default: `"OH"`). 3'-end modification (or mass).
-- *five_prime* `[STRING|FLOAT]` — Optional (default: `"OH"`). 5'-end modification (or mass).
-- *five_is_PS* `[BOOL]` — Optional (default: `FALSE`). Was the 5'-modification attached via PS linkage?
+- **Sequence** (*sequence*) `[STRING]` — required  
+Sequences should be in 5' to 3' direction.
+Oligowizard uses a dedicated code to represent the most commonly used 2' modification patterns:
+DNA: (A / C / G / T), RNA: ( D / E / F / U), LNA: (H / I\* / J / K), MOE: (L / M\* / N / O), OMe: (P / Q / R / S), 2'- F:(V / W / X / Y)
+Note here, that bases indicated with an asterisk carry an 5-Me on the nucleobase, as these are the most commonly used version of the phosphoramidite. Lower case letters are used to denote phosphorothioate linkages (PS) on the backbone, while capital letters symbolise regular phosphate diesters (PO). Placement of the PS linkage is relative to the 3' postion of the nucleotide. 
+AC\*GT == AcGT. If the character at the 3' end of the sequence is in lower case, no changes are made to the result, as the 3' position does not usually carry a phosphate group. This distinction is however important, if a modification is attached to the 3' end!
+
+- **3'-Modification** (*three_prime*) `[STRING|FLOAT]` — optional (default: `"OH"`)  
+Modification attached at the three prime position of the oligonucleotide. If a string is passed, a lookup table for predefined modifications will be used to load mass, absorbance / melting properties, possible protecting groups / oxidation states.
+If a floating point number is passed, mass calculations will use this (ommitting the 3'Oxygen) -- no further assumptions will be made about absorbance or melting properties. 
+Linkage type (PO/PS) between the three prime nucleotide and possible modifcation will be calculated based on the capitalisation of the last character in the sequence.
+
+- **5'-Modification** (*five_prime*) `[STRING|FLOAT]` — optional (default: `"OH"`)  
+Modification attached at the five prime position of the oligonucleotide. If a string is passed, a lookup table for predefined modifications will be used to load mass, absorbance / melting properties, possible protecting groups / oxidation states.
+If a floating point number is passed, mass calculations will use this (ommitting the 3'Oxygen) -- no further assumptions will be made about absorbance or melting properties.
+
+- **5' Modification was attached via PS linkage** (*five_is_PS*) `[BOOL]` — optional (default: `FALSE`)  
+Should be set to true if the 5' Modification linkage was sulfurised during synthesis to yield to correct molecular weight
+
+- **Absorbance at 260 nm** (*A260*) `[FLOAT]` — optional (default: `1.0`)  
+The measured absorbance (optical densitiy) at 260 nm. The value is used to calculate concentration, and melting temperature.
+
+- **Sodium Concentration** (*Na_conc*) `[FLOAT]` — optional (default: `50`)  
+The concentration of sodium cations (mM). Value is used in the melting temperature calculation
+
+- **Potassium Concentration** (*K_conc*) `[FLOAT]` — optional (default: `0`)  
+The concentration of potassium cations (mM). Value is used in the melting temperature calculation
+
+- **Magnesium Concentration** (*Mg_conc*) `[FLOAT]` — optional (default: `0`)  
+The concentration of magnesium cations (mM). Value is used in the melting temperature calculation
+
+
 
 ### Output Fields
 
-- *sequence* `[STRING]` — Echoed input sequence.
-- *sequence_sanitised* `[STRING]` — With custom bases replaced.
-- *DNAeq* `[STRING]` — DNA-PO equivalent.
-- *five_prime*, *three_prime* `[STRING]` — 5'/3' modification description.
-- *A260*, *oligo_length*, *gc_cont*, *rev_comp* — Basic oligo stats.
-- *tm1*, *tm2* — Melting temperatures.
-- *mass1* → canonical mass (DMT-OFF)  
-- *mass2*, *mass3*, *mass4* → alternative protected states  
-- *mass2_text*, *mass3_text*, *mass4_text* → explanation strings  
-- *molext*, *molext_nn* — Extinction coefficients (simple & NN)  
-- *conc1*, *conc2*, *conc1_nn*, *conc2_nn* — Calculated concentrations
+- **Sequence** (*sequence*) `[STRING]`  
+Returns the input sequence.
 
+- **Custom NT removed** (*sequence_sanitised*) `[STRING]`  
+Returns the input sequence with any custom nucleotides replaced by the closest mapping DNA base (based on user setting).
 
+- **DNA-PO eq.** (*DNAeq*) `[STRING]`  
+Returns the DNA-Phosphodiester equivalent of the input sequence: as capital letters (PO) with any non-DNA bases replaced by the corresponding DNA bases.
+
+- **3' Modification** (*three_prime*) `[STRING]`  
+Returns the input 3' modification mapped to its full name, or entered FLOAT value as string.
+
+- **5' Modification** (*five_prime*) `[STRING]`  
+Returns the input 5' modification mapped to its full name, or entered FLOAT value as string.
+
+- **Absorbance at 260 nm** (*A260*) `[FLOAT]`  
+Returns the input absorbance at 260 nanometer.
+
+- **Length** (*oligo_length*) `[INTEGER]`  
+Returns the length of the nucleotide in nucleotides (not counting terminal modifcations).
+
+- **GC Content** (*gc_cont*) `[FLOAT]`  
+Returns the percentage of Guanosine and Cytosin bases (or equivalents thereof) in the sequence.
+
+- **Reverse Complement** (*rev_comp*) `[STRING]`  
+Reverse complement of the sequence. Custom nucleotides will be replaced according to user-specified equivalent bases. 
+Notably: as all characters will be inverted in capitalisation and backbone identity is relative to the 3' linkage, postion of PS linkages are not preserved correctly (AcGGT-> ACCgT == A-C\*G-G-T -> A-C-C-G\*T) this is a known bug.
+
+- **DNA melting temperature** (*tm1*) `[FLOAT]`  
+Melting temperature, assuming the oligonucleotide is a DNA PO strand (1, 2, 3)
+
+- **Melting temperature approximation** (*tm2*) `[STRING]`  
+Estimated melting temperature with correction values applied for sugar modifications where available (currently, MOE and LNA).
+Returned as a string with a range.
+Takes user-specified modifiers into account.
+
+- **Molecular weight (canonical)** (*mass1*) `[FLOAT]`  
+Molecular weight of the oligo and terminal modifications with all protecting groups removed (DMT-OFF)
+
+- **Molecular weight - Alternative 3' Mass** (*mass2*) `[FLOAT]` — (default: `0`)  
+If the modification at the 3' position of the oligo has an alternative mass depending on protection groups / oxidative state, the corresponding mass is returned here.
+
+- **Alternative 3' Mass Identity** (*mass2_text*) `[STRING]`  
+Short explanation, which alternative form of the 3' modification was taken into account for the alternative mass.
+
+- **Molecular weight - Alternative 5' Mass** (*mass3*) `[FLOAT]`  
+If the modification at the 5' position of the oligo has an alternative mass depending on protection groups / oxidative state, the corresponding mass is returned here.
+If no modification was specified, the DMT-ON weight will be given here.
+
+- **Alternative 5' Mass Identity** (*mass3_text*) `[STRING]`  
+Short explanation, which alternative form of the 5' modification was taken into account for the alternative mass.
+For unmodified oligos, this will be "5' DMT protected"
+
+- **Molecular weight - Double modified** (*mass4*) `[FLOAT]`  
+If the modification at the 3' and 5' positions of the oligo have an alternative mass depending on protection groups / oxidative state, the corresponding mass is returned here.
+If no modification was specified for the 5' end, the DMT-ON weight will be given here in combination with the 3' alternative mass.
+
+- **Alternative Mass Identity** (*mass4_text*) `[STRING]`  
+Short explanation, which alternative forms of the 3' and 5' modification was taken into account for the alternative mass.
+
+- **Molar Extinction Coefficient (simple)** (*molext*) `[FLOAT]`  
+Molar extinction coefficient (in L mol-1 cm-1) of the oligo and any present modifcations based on a simple extinction model.
+Will take user specified extinction values into account
+
+- **Concentration (Simple extinction)** (*conc1*) `[FLOAT]`  
+Concentration of the oligo (in micromole per liter) based on simple extinction coefficient and specified absorbance at 260 nm (A260).
+
+- **Concentration (Simple extinction)** (*conc2*) `[FLOAT]`  
+Concentration of the oligo (in nanogram per microliter) based on simple extinction coefficient and specified absorbance at 260 nm (A260).
+
+- **Molar Extinction Coefficient (NN Model)** (*molext_nn*) `[FLOAT]`  
+Molar extinction coefficient (in L mol-1 cm-1) of the oligo based on the nearast neighbor model.
+Currently only takes nucleobases into account.
+
+- **Concentration (NN Model)** (*conc1_nn*) `[FLOAT]`  
+Concentration of the oligo (in micromole per liter) based on the nearast neighbor model extinction coefficient and specified absorbance at 260 nm (A260).
+
+- **Concentration (NN Model)** (*conc2_nn*) `[FLOAT]`  
+Concentration of the oligo (in nanogram per microliter)  based on the nearast neighbor model extinction coefficient and specified absorbance at 260 nm (A260).
 
 ---
 
-## Structure Drawing
+## Sequence Conversion tool (/convert)
 
-Generates `.cdxml` file of the oligo.
+This tool provides a search-and-replace function to convert your sequence in- and out- of oligowizard code
 
-### Required Input
+### Input Parameters
 
-- *sequence* `[STRING]` — Using same notation as above.
+- **Sequence** (*sequence*) `[STRING]` — required  
+Sequences should be in 5' to 3' direction.
+Oligowizard uses a dedicated code to represent the most commonly used 2' modification patterns:
+DNA: (A / C / G / T), RNA: ( D / E / F / U), LNA: (H / I\* / J / K), MOE: (L / M\* / N / O), OMe: (P / Q / R / S), 2'F: (V / W / X / Y)
+Note here, that bases indicated with an asterisk carry an 5-Me on the nucleobase, as these are the most commonly used version of the phosphoramidite. Lower case letters are used to denote phosphorothioate linkages (PS) on the backbone, while capital letters symbolise regular phosphate diesters (PO).
 
-### Optional Parameters
+- **Input Code** (*input_code*) `[STRING]` — required  
+Defines which nucleotides should be replaced - only those nucleotides will be affected!  
+`DNA` , `RNA` , `LNA` ,  `MOE` ,  `OMe` , `2'F` 
 
-- *width*, *size*, *face* `[INTEGER]` — Bond/label appearance.
-- *scale* `[FLOAT]` — Scale of entire drawing.
+- **Input Code** (*output_code*) `[STRING]` — required  
+Sets which code set should be used for the replacement  
+`DNA` , `RNA` , `LNA` ,  `MOE` ,  `OMe` , `2'F` 
+
+
+### Output Fields
+
+- **Sequence** (*sequence*) `[STRING]`  
+Returns the given sequence
+
+- **Input Code** (*input_code*) `[STRING]`  
+Returns the given code to be converted from
+
+- **Input Code** (*output_code*) `[STRING]`  
+Returns the given code to be converted to
+
+- **Converted Sequence** (*output*) `[STRING]`  
+Returns the sequence with selected nucleotides replaced.
+
+---
+
+## Chemical Structure Generation (/structure)
+
+This tool allows you to generate structure files (as *.cdxml) from a given nucleotide sequence. These files can be viewed and edited in a compatible third-party structure editor such as ChemDraw or ACD/ChemSketch.
+
+***DISCLAIMER** ‘ChemDraw’ is a registered property of Revvity, Inc. (formerly PerkinElmer, Inc.), and ‘ACD/ChemSketch’ is a registered property of Advanced Chemistry Development, Inc. (ACD/Labs). OLIGOWIZARD LTD has no affiliation with Revvity, Inc. or ACD/Labs. The chemical structure drawing feature generates CDXML files compatible with software like ChemDraw (a separate licence may be required) and similar tools, including ACD/ChemSketch. OLIGOWIZARD LTD does not provide software licences or support for these third-party applications.*
+
+### Input Parameters
+
+- **Sequence** (*sequence*) `[STRING]` — required  
+Sequences should be in 5' to 3' direction.
+Oligowizard uses a dedicated code to represent the most commonly used 2' modification patterns:
+DNA: (A / C / G / T), RNA: ( D / E / F / U), LNA: (H / I\* / J / K), MOE: (L / M\* / N / O), OMe: (P / Q / R / S), 2'- F:(V / W / X / Y)
+Note here, that bases indicated with an asterisk carry an 5-Me on the nucleobase, as these are the most commonly used version of the phosphoramidite. Lower case letters are used to denote phosphorothioate linkages (PS) on the backbone, while capital letters symbolise regular phosphate diesters (PO). Placement of the PS linkage is relative to the 3' postion of the nucleotide. 
+AC\*GT == AcGT. If the character at the 3' end of the sequence is in lower case, no changes are made to the result, as the 3' position does not usually carry a phosphate group. This distinction is however important, if a modification is attached to the 3' end!
+
+- **Download filename and directory** (*filename*) `[STRING]` — optional (default: `NONE`)  
+Sets the directory/filname for the outfile. 
+Defaults to the current directory with a random, URL-safe filename:  
+`structure_XXXXXX.cdxml`
+
+- **Bond Line Width** (*width*) `[INTEGER]` — optional (default: `1`)  
+Sets the width of the bonds.
+
+- **Atom Label Font Size** (*size*) `[INTEGER]` — optional (default: `12`)  
+Sets the font size for atom labels.
+
+- **LabelFace** (*face*) `[INTEGER]` — optional (default: `96`)  
+Determines the appearnces of atom labels - default/bold. Enter 97 for bold
+
+- **Scaling factor** (*scale*) `[FLOAT]` — optional (default: `0.45`)  
+Scales the size of the molecule. Especially useful to fit larger molecules on one page.
 
 ### Output
-
-- *outfile* `[FILE]` — CDXML structure file.
-
-
+- **Structure file** (*target_path*) `[STRING]`  
+Returns the filepath of the created *.cdxml file.
+Defaults to the current directory with a random, URL-safe filename:  
+`structure_XXXXXX.cdxml`
 
 ---
 
@@ -128,8 +275,7 @@ List of supported modifications for *three_prime* and *five_prime*. Pass the str
 
 ---
 
-## Citation & Licence
+## Citation
 
-All tools are free to use for academic and commercial purposes under Creative Commons. Please cite:
-
-*“Molar Extinction Coefficients were calculated using the OLIGOWIZARD nucleic acid toolbox – available at https://www.oligowizard.com/.”*
+We kindly ask you to cite:
+*“Oligo properties were calculated using the OLIGOWIZARD nucleic acid toolbox – available at https://www.oligowizard.com/.”*

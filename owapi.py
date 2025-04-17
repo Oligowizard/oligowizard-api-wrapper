@@ -1,13 +1,13 @@
 """
 Oligowizard API Python Wrapper
-(C) OLIGOWIZARD LTD & J. P. Becker
+(C) OLIGOWIZARD LTD
 VERSION 1.0
 2025
 A lightweight Python wrapper for sending requests to the Oligowizard API. Includes examples for authentication, sequence queries, and result parsing.
 https://github.com/Oligowizard/oligowizard-api-wrapper
 """
 
-import requests # dependency to for http requests
+import requests # dependency for HTTP requests
 # https://pypi.org/project/requests/
 # pip install requests
 

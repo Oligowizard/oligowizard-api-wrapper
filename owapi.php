@@ -1,7 +1,7 @@
 <?php
 /*
 Oligowizard API PHP Wrapper
-(C) OLIGOWIZARD LTD & J. P. Becker
+(C) OLIGOWIZARD LTD
 VERSION 1.0
 2025
 A lightweight PHP wrapper for sending requests to the Oligowizard API. Includes examples for authentication, sequence queries, and result parsing.
