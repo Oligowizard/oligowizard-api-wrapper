@@ -13,18 +13,20 @@ All variable names in *italics* represent the keys used in the API request or re
 
 ## Contents
 
-- [/advanced - Calculator Endpoint](#Oligo-Properties-Calculator-(/advanced))
-- [/convert - Sequence Conversion Tool](#Sequence-Conversion-tool-(/convert))
-- [/structure - Chemical Structure Generation](#Chemical-Structure-Generation-(/structure))
+- [Oligo Properties Calculator (/advanced)](#Oligo-Properties-Calculator)
+- [Sequence Conversion Tool (/convert)](#Sequence-Conversion-tool)
+- [Chemical Structure Generation (/structure)](#Chemical-Structure-Generation)
 - [Available Terminal Modifications](#Available-Terminal-Modifications)
 - [Citation](#Citation)
 
 
 ---
 
-## Oligo Properties Calculator (/advanced)
+## Oligo Properties Calculator
 
-Performs biophysical and chemical calculations for a single oligonucleotide.
+Performs biophysical and chemical calculations for a single oligonucleotide.  
+
+**endpoint:** `https://api.oligowizard.app/advanced`  
 
 ### Input Parameters
 
@@ -145,9 +147,11 @@ Concentration of the oligo (in nanogram per microliter)  based on the nearast ne
 
 ---
 
-## Sequence Conversion tool (/convert)
+## Sequence Conversion tool
 
-This tool provides a search-and-replace function to convert your sequence in- and out- of oligowizard code
+This tool provides a search-and-replace function to convert your sequence in- and out- of oligowizard code  
+
+**endpoint:** `https://api.oligowizard.app/convert`  
 
 ### Input Parameters
 
@@ -182,9 +186,11 @@ Returns the sequence with selected nucleotides replaced.
 
 ---
 
-## Chemical Structure Generation (/structure)
+## Chemical Structure Generation
 
-This tool allows you to generate structure files (as *.cdxml) from a given nucleotide sequence. These files can be viewed and edited in a compatible third-party structure editor such as ChemDraw or ACD/ChemSketch.
+This tool allows you to generate structure files (as *.cdxml) from a given nucleotide sequence. These files can be viewed and edited in a compatible third-party structure editor such as ChemDraw or ACD/ChemSketch.  
+
+**endpoint:** `https://api.oligowizard.app/structure`  
 
 ***DISCLAIMER** ‘ChemDraw’ is a registered property of Revvity, Inc. (formerly PerkinElmer, Inc.), and ‘ACD/ChemSketch’ is a registered property of Advanced Chemistry Development, Inc. (ACD/Labs). OLIGOWIZARD LTD has no affiliation with Revvity, Inc. or ACD/Labs. The chemical structure drawing feature generates CDXML files compatible with software like ChemDraw (a separate licence may be required) and similar tools, including ACD/ChemSketch. OLIGOWIZARD LTD does not provide software licences or support for these third-party applications.*
 
